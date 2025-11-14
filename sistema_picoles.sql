@@ -326,6 +326,61 @@ ALTER TABLE `picole_ingrediente`
   ADD CONSTRAINT `picole_ingrediente_ibfk_2` FOREIGN KEY (`id_ingrediente`) REFERENCES `ingredientes` (`id`);
 COMMIT;
 
+-- DADOS INICIAIS (INSERTS)
+INSERT INTO sabor (nome) VALUES
+('Morango'), ('Chocolate'), ('Uva'), ('Limão'), ('Coco');
+
+INSERT INTO embalagem (tipo) VALUES
+('Plástica'), ('Papel'), ('Biodegradável');
+
+INSERT INTO ingredientes (nome) VALUES
+('Água'), ('Açúcar'), ('Leite'), ('Corante'), ('Aroma Natural'), ('Fruta');
+
+INSERT INTO aditivo_nutritivo (nome) VALUES 
+('Vitamina C'), ('Cálcio'), ('Ferro');
+
+INSERT INTO conservante (nome) VALUES
+('Benzoato de Sódio'), ('Sorbato de Potássio');
+
+INSERT INTO revendedor (nome, cnpj, endereco) VALUES
+('Gelados Ltda', '11.222.333/0001-44', 'Rua das Flores, 123'),
+('Frio & Cia', '55.666.777/0001-88', 'Av. Central, 456');
+
+-- PICOLÉS
+INSERT INTO picole (nome, tipo, id_sabor, id_embalagem) VALUES
+('Picolé de Morango', 'normal', 1, 1),
+('Picolé de Chocolate', 'ao leite', 2, 1),
+('Picolé de Limão', 'normal', 4, 3);
+
+-- RELAÇÃO PICOLÉ–INGREDIENTES
+INSERT INTO picole_ingrediente VALUES
+(1,1),(1,2),(1,6),
+(2,3),(2,2),(2,4),
+(3,1),(3,2),(3,5);
+
+-- LOTES
+INSERT INTO lote (data_producao, quantidade, id_picole) VALUES
+('2025-01-10', 500, 1),
+('2025-01-15', 300, 2),
+('2025-01-20', 450, 3);
+
+-- NOTA FISCAL + LOTES VENDIDOS
+INSERT INTO nota_fiscal (numero, data, id_revendedor, valor_total) VALUES
+('NF0001', '2025-02-01', 1, 0);
+
+INSERT INTO nota_lote (id_nota, id_lote, quantidade_vendida, valor_unitario) VALUES
+(1, 1, 100, 2.50),
+(1, 2, 50, 3.00);
+
+-- Atualizar valor total
+UPDATE nota_fiscal
+SET valor_total = (
+    SELECT SUM(quantidade_vendida * valor_unitario)
+    FROM nota_lote
+    WHERE id_nota = 1
+)
+WHERE id = 1;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
