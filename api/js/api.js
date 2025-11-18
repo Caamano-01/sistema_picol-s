@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:1234/sistema_picoles/api/routes/";
+const API_URL = "http://localhost:1234/sistema_picoles/api/routes/";
 
 async function apiGet(endpoint) {
     const resp = await fetch(API_URL + endpoint);
