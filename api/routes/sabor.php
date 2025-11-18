@@ -21,3 +21,4 @@ if ($method === "POST") {
 
     echo json_encode(["sucesso" => true]);
 }
+?>

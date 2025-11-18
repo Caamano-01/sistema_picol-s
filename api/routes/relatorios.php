@@ -22,3 +22,4 @@ if (isset($_GET["vendas"])) {
 }
 
 echo json_encode(["erro" => "Relatório inválido"]);
+?>

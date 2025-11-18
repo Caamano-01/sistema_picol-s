@@ -45,3 +45,4 @@ if ($method === "POST") {
     echo json_encode(["sucesso" => true, "id" => $pdo->lastInsertId()]);
     exit;
 }
+?>
