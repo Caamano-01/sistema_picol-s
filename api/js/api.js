@@ -1,8 +1,8 @@
-const API_URL = "http://localhost:1234/sistema_picoles/api/routes/";
+const API_URL = "http://localhost:1234/sistema_picoles/api/";
 
 /**
  * Obtém o perfil do usuário armazenado localmente.
- * @returns {string|null} 'admin', 'vendedor' ou null se não logado.
+ * @returns {string|null}
  */
 function getUserProfile() {
     return localStorage.getItem('userProfile');
@@ -22,9 +22,9 @@ async function apiGet(endpoint) {
 }
 
 async function apiPost(endpoint, data) {
-    const resp = await fetch(API_URL + endpoint, {
+    const response = await fetch(url, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
     });
     
@@ -33,5 +33,5 @@ async function apiPost(endpoint, data) {
         return resp.json();
     }
     
-    return resp.json();
+    return response.json();
 }

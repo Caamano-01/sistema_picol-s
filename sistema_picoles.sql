@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 18/11/2025 às 20:39
+-- Tempo de geração: 19/11/2025 às 20:40
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -78,7 +78,10 @@ CREATE TABLE `embalagem` (
 INSERT INTO `embalagem` (`id`, `tipo`) VALUES
 (1, 'Plástica'),
 (2, 'Papel'),
-(3, 'Biodegradável');
+(3, 'Biodegradável'),
+(4, 'Plástica'),
+(5, 'Papel'),
+(6, 'Biodegradável');
 
 -- --------------------------------------------------------
 
@@ -101,7 +104,13 @@ INSERT INTO `ingredientes` (`id`, `nome`) VALUES
 (3, 'Leite'),
 (4, 'Corante'),
 (5, 'Aroma Natural'),
-(6, 'Fruta');
+(6, 'Fruta'),
+(7, 'Água'),
+(8, 'Açúcar'),
+(9, 'Leite'),
+(10, 'Corante'),
+(11, 'Aroma Natural'),
+(12, 'Fruta');
 
 -- --------------------------------------------------------
 
@@ -188,7 +197,8 @@ CREATE TABLE `picole` (
 INSERT INTO `picole` (`id`, `nome`, `tipo`, `id_sabor`, `id_embalagem`) VALUES
 (1, 'Picolé de Morango', 'normal', 1, 1),
 (2, 'Picolé de Chocolate', 'ao leite', 2, 1),
-(3, 'Picolé de Limão', 'normal', 4, 3);
+(3, 'Picolé de Limão', 'normal', 4, 3),
+(4, 'Choquito', 'normal', 2, 3);
 
 -- --------------------------------------------------------
 
@@ -257,7 +267,33 @@ INSERT INTO `sabor` (`id`, `nome`) VALUES
 (2, 'Chocolate'),
 (3, 'Uva'),
 (4, 'Limão'),
-(5, 'Coco');
+(5, 'Coco'),
+(6, 'Morango'),
+(7, 'Chocolate'),
+(8, 'Uva'),
+(9, 'Limão'),
+(10, 'Coco');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `usuario`
+--
+
+CREATE TABLE `usuario` (
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `senha` varchar(255) NOT NULL,
+  `perfil` enum('admin','vendedor') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `usuario`
+--
+
+INSERT INTO `usuario` (`id`, `username`, `senha`, `perfil`) VALUES
+(1, 'admin', '123456', 'admin'),
+(2, 'vendedor', '123456', 'vendedor');
 
 --
 -- Índices para tabelas despejadas
@@ -336,6 +372,13 @@ ALTER TABLE `sabor`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Índices de tabela `usuario`
+--
+ALTER TABLE `usuario`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
 -- AUTO_INCREMENT para tabelas despejadas
 --
 
@@ -355,13 +398,13 @@ ALTER TABLE `conservante`
 -- AUTO_INCREMENT de tabela `embalagem`
 --
 ALTER TABLE `embalagem`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `ingredientes`
 --
 ALTER TABLE `ingredientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de tabela `lote`
@@ -379,7 +422,7 @@ ALTER TABLE `nota_fiscal`
 -- AUTO_INCREMENT de tabela `picole`
 --
 ALTER TABLE `picole`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `revendedor`
@@ -391,7 +434,13 @@ ALTER TABLE `revendedor`
 -- AUTO_INCREMENT de tabela `sabor`
 --
 ALTER TABLE `sabor`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT de tabela `usuario`
+--
+ALTER TABLE `usuario`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restrições para tabelas despejadas
