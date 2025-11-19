@@ -7,6 +7,17 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <!-- Script de Verificação de Perfil -->
+    <script src="../js/api.js"></script>
+    <script>
+      // Verifica se há algum perfil logado. Se não houver, redireciona.
+      const perfil = getUserProfile();
+      if (!perfil) {
+        alert("Acesso negado. É necessário estar logado.");
+        window.location.href = "../index.html"; // Volta para o menu principal
+      }
+    </script>
+
 <div class="container mt-4">
     <h2>Relatório de Vendas</h2>
 
@@ -19,14 +30,15 @@
     <canvas id="graficoRanking" height="120"></canvas>
 
     <div class="mt-4">
-        <a href="../index.html" class="btn btn-secondary">Voltar</a>
+        <a href="index.html" class="btn btn-secondary">Voltar</a>
     </div>
 </div>
 
 <script>
 async function carregarRelatorios() {
+    // ... Código JavaScript original mantido aqui para compilar ...
     // 1. Faturamento Mensal
-    const respVendas = await fetch('relatorios.php?vendas=true');
+    const respVendas = await fetch('../relatorios.php?vendas=true');
     const dadosVendas = await respVendas.json();
 
     const labelsVendas = dadosVendas.map(r => r.mes);
@@ -51,7 +63,7 @@ async function carregarRelatorios() {
     });
 
     // 2. Ranking de Picolés
-    const respRanking = await fetch('relatorios.php?ranking=true');
+    const respRanking = await fetch('../relatorios.php?ranking=true');
     const dadosRanking = await respRanking.json();
 
     const labelsRanking = dadosRanking.map(r => r.picole);
@@ -72,13 +84,16 @@ async function carregarRelatorios() {
         options: {
             responsive: true,
             plugins: { legend: { display: true } },
-            scales: { y: { beginAtZero: true } }
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
     });
 }
-
-// Carrega os gráficos ao abrir a página
-window.onload = carregarRelatorios;
+carregarRelatorios();
 </script>
+<script src="../js/relatorios.js"></script>
 </body>
 </html>
