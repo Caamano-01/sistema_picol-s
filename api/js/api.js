@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:1234/sistema_picoles/api/routes/";
+const API_URL = "http://localhost:1234/picole_sistema/api/routes/";
 
 /**
  * Obtém o perfil do usuário armazenado localmente.

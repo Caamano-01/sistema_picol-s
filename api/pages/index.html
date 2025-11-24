@@ -7,7 +7,7 @@
 </head>
 <style>
     body {
-        background-color: rgb(255, 242, 224);
+        background-color: rgb(247, 244, 240);
     }
 
     img {
@@ -18,7 +18,7 @@
         background-color: rgb(255, 172, 63);
     }
     .navbar {
-        background-color: rgb(255, 172, 63); /* Cor de destaque para a barra de navegação */
+        background-color: rgb(170, 170, 170); /* Cor de destaque para a barra de navegação */
     }
     .btn-logout {
         color: white;
@@ -32,69 +32,66 @@
 </style>
 <body>
 
-<nav class="navbar navbar-dark p-3">
-    <div class="container d-flex justify-content-between align-items-center">
-        <img alt="Logo" src="img/sistema.png">
-        <span id="perfilUsuario" class="text-white me-3"></span>
-        <button id="logoutBtn" class="btn btn-outline-light btn-logout">Sair</button>
-    </div>
-</nav>
+    <nav class="navbar navbar-dark p-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <img alt="Logo" src="../img/sistema.png">
+            <span id="perfilUsuario" class="text-white me-3"></span>
+        </div>
+    </nav>
 
-<div class="container mt-4">
-    <h2 id="tituloBoasVindas"><b>Bem-vindo!</b></h2>
-    <p><b>Escolha uma das funcionalidades abaixo:</b></p>
+    <div class="container mt-4">
+        <h2 id="tituloBoasVindas"><b>Bem-vindo!</b></h2>
+        <p><b>Escolha uma das funcionalidades abaixo:</b></p>
 
-    <div class="list-group" id="menuFuncionalidades">
-        <!-- Itens de menu serão injetados aqui via JavaScript -->
-    </div>
-    
-    <div class="mt-4">
-        <a href="index.html" class="btn btn-secondary">Voltar ao Menu</a>
-    </div>
-</div>
-
-<script src="/api/js/api.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const perfil = getUserProfile();
-
-        // 1. Verificar Autenticação e Redirecionar
-        if (!perfil) {
-            // Se não estiver logado, redireciona para a página de login
-            window.location.href = "pages/login.html";
-            return;
-        }
-
-        const tituloBoasVindas = document.getElementById('tituloBoasVindas');
-        const perfilUsuario = document.getElementById('perfilUsuario');
-        const menu = document.getElementById('menuFuncionalidades');
-        let htmlMenu = '';
-
-        // Exibe o perfil atual
-        perfilUsuario.textContent = `Perfil: ${perfil.charAt(0).toUpperCase() + perfil.slice(1)}`;
+        <div class="list-group" id="menuFuncionalidades">
+            <!-- Itens de menu serão injetados aqui via JavaScript -->
+        </div>
         
-        // 2. Montar Menu Baseado no Perfil
-        if (perfil === 'admin') {
-            tituloBoasVindas.innerHTML = '<b>Bem-vindo, Administrador!</b>';
-            htmlMenu += `
-                <a href="pages/cadastro.html" class="list-group-item list-group-item-action">Cadastro de Picolé (Admin)</a>
-                <a href="pages/emitir_nota.html" class="list-group-item list-group-item-action">Emissão de Nota Fiscal (Vendedor e Admin)</a>
-                <a href="pages/relatorio_vendas.html" class="list-group-item list-group-item-action">Relatórios de Vendas (Admin)</a>
-            `;
-        } else if (perfil === 'vendedor') {
-            tituloBoasVindas.innerHTML = '<b>Bem-vindo, Vendedor!</b>';
-            htmlMenu += `
-                <a href="pages/emitir_nota.html" class="list-group-item list-group-item-action">Emissão de Nota Fiscal</a>
-                <a href="pages/relatorio_vendas.html" class="list-group-item list-group-item-action">Relatórios de Vendas</a>
-            `;
-        }
-        
-        menu.innerHTML = htmlMenu;
+        <div class="mt-4">
+            <a href="../login.html" class="btn btn-secondary">Sair</a>
+        </div>
+    </div>
 
-        // 3. Adicionar Lógica de Logout
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-    });
+    <script src="../js/api.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const perfil = getUserProfile();
 
-</script>
+            // 1. Verificar Autenticação e Redirecionar
+            if (!perfil) {
+                // Se não estiver logado, redireciona para a página de login
+                window.location.href = "../api/login.html";
+                return;
+            }
+
+            const tituloBoasVindas = document.getElementById('tituloBoasVindas');
+            const perfilUsuario = document.getElementById('perfilUsuario');
+            const menu = document.getElementById('menuFuncionalidades');
+            let htmlMenu = '';
+
+            // Exibe o perfil atual
+            perfilUsuario.textContent = `Perfil: ${perfil.charAt(0).toUpperCase() + perfil.slice(1)}`;
+            
+            // 2. Montar Menu Baseado no Perfil
+            if (perfil === 'admin') {
+                tituloBoasVindas.innerHTML = '<b>Bem-vindo, Administrador!</b>';
+                htmlMenu += `
+                    <a href="cadastro.html" class="list-group-item list-group-item-action">Cadastro de Picolé (Admin)</a>
+                    <a href="emitir_nota.html" class="list-group-item list-group-item-action">Emissão de Nota Fiscal (Vendedor e Admin)</a>
+                    <a href="relatorio_vendas.html" class="list-group-item list-group-item-action">Relatórios de Vendas (Admin)</a>
+                `;
+            } else if (perfil === 'vendedor') {
+                tituloBoasVindas.innerHTML = '<b>Bem-vindo, Vendedor!</b>';
+                htmlMenu += `
+                    <a href="emitir_nota.html" class="list-group-item list-group-item-action">Emissão de Nota Fiscal</a>
+                `;
+            }
+            
+            menu.innerHTML = htmlMenu;
+
+            // 3. Adicionar Lógica de Logout
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+        });
+    </script>
 </body>
 </html>

@@ -276,31 +276,26 @@
   <!-- Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-   <script>
-      // CAIXAS
-      const boxIngredientes = document.getElementById("box-ingredientes");
-      const boxAdtivo = document.getElementById("box-adtivo");
-      const boxConservante = document.getElementById("box-conservante");
-
-      document.getElementById("tipo-picole").addEventListener("change", function () {
-          const tipo = this.value;
-
-          boxIngredientes.style.display = "block"; // ingredientes SEMPRE aparecem
-
-          if (tipo === "agua") { 
-              // AO LEITE
-              boxConservante.style.display = "block";
-              boxAdtivo.style.display = "none";
-          } 
-          else if (tipo === "cremoso") { 
-              // NORMAL
-              boxAdtivo.style.display = "block";
-              boxConservante.style.display = "none";
-          }
-      });
-    </script>
-
   <script>
+    // ===== Função genérica para carregar selects via fetch =====
+    function carregarSelect(url, elementoId, campo) {
+      fetch(url)
+        .then(r => r.json())
+        .then(lista => {
+          document.getElementById(elementoId).innerHTML =
+            lista.map(item => `<option value="${item.id}">${item[campo]}</option>`).join("");
+        })
+        .catch(err => console.error(`Erro ao carregar ${elementoId}:`, err));
+    }
+
+    // ===== Inicializar selects =====
+    carregarSelect("../routes/ingrediente.php", "ingredientes-picole", "nome");
+    carregarSelect("../routes/aditivo_nutritivo.php", "adtivo-picole", "nome");
+    carregarSelect("../routes/conservante.php", "conservante-picole", "nome");
+    carregarSelect("../routes/sabor.php", "sabor-picole", "nome");
+    carregarSelect("../routes/embalagem.php", "embalagem-picole", "tipo");
+
+    // ===== Alternância de abas =====
     const links = document.querySelectorAll(".nav-link");
     const tabs = document.querySelectorAll(".tab-pane");
 
@@ -313,39 +308,37 @@
         link.classList.add("active");
 
         // Troca de abas com animação
-        tabs.forEach(t => {
-          t.classList.remove("active");
-        });
-
-        const selected = document.getElementById(tab);
-        selected.classList.add("active");
+        tabs.forEach(t => t.classList.remove("active"));
+        document.getElementById(tab).classList.add("active");
       });
     });
 
-    // INGREDIENTES
-    fetch("../routes/ingredientes.php")
-      .then(r => r.json())
-      .then(lista => {
-          document.getElementById("ingredientes-picole").innerHTML =
-              lista.map(i => `<option value="${i.id}">${i.nome}</option>`).join("");
-      });
+    // ===== Exibição condicional de caixas no cadastro de picolé =====
+    const boxIngredientes = document.getElementById("box-ingredientes");
+    const boxAdtivo = document.getElementById("box-adtivo");
+    const boxConservante = document.getElementById("box-conservante");
+    const tipoPicole = document.getElementById("tipo-picole");
 
-    // ADITIVO
-    fetch("../routes/aditivo_nutritivo.php")
-      .then(r => r.json())
-      .then(lista => {
-          document.getElementById("adtivo-picole").innerHTML =
-              lista.map(a => `<option value="${a.id}">${a.nome}</option>`).join("");
-      });
+    tipoPicole.addEventListener("change", () => {
+      const tipo = tipoPicole.value;
 
-    // CONSERVANTE
-    fetch("../routes/conservante.php")
-      .then(r => r.json())
-      .then(lista => {
-          document.getElementById("conservante-picole").innerHTML =
-              lista.map(c => `<option value="${c.id}">${c.nome}</option>`).join("");
+      // Ingredientes SEMPRE aparecem
+      boxIngredientes.style.display = "block";
+
+      // Exibe apenas a caixa correspondente
+      boxAdtivo.style.display = tipo === "cremoso" ? "block" : "none";
+      boxConservante.style.display = tipo === "agua" ? "block" : "none";
+    });
+
+    // ===== Prevenir refresh de página ao enviar formulários =====
+    const forms = document.querySelectorAll("form");
+    forms.forEach(form => {
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        // Aqui você pode chamar sua API via fetch
+        alert(`Formulário '${form.id}' enviado!`);
       });
+    });
   </script>
-
 </body>
 </html>

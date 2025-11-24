@@ -14,7 +14,7 @@ if ($method === "GET") {
     // GET: Listar notas com revendedor
     echo json_encode(
         $pdo->query("
-            SELECT n.*, r.nome AS revendedor
+            SELECT n.*, r.`razão social` AS revendedor
             FROM nota_fiscal n
             INNER JOIN revendedor r ON r.id = n.id_revendedor
             ORDER BY n.id DESC

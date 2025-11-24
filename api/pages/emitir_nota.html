@@ -18,6 +18,47 @@
     }
 </style>
 <body>
+    <nav class="navbar navbar-dark p-3">
+        <div class="container">
+            <img alt="Logo" src="../img/sistema.png" >
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+
+        <h2>Emissão de Nota Fiscal (Vendedor e Admin)</h2>
+
+        <form id="formNota" class="mt-3">
+
+            <div class="mb-3">
+                <label>Revendedor</label>
+                <select id="revendedor" class="form-control"></select>
+            </div>
+
+            <div class="mb-3">
+                <label>Selecionar Lote</label>
+                <select id="lote" class="form-control"></select>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label>Quantidade Vendida</label>
+                    <input id="quantidade" type="number" class="form-control" required min="1">
+                </div>
+                <div class="col">
+                    <label>Valor Unitário</label>
+                    <input id="valor" type="number" class="form-control" step="0.01" required min="0.01">
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="../pages/index.html" class="btn btn-secondary">Voltar</a>
+                <button type="submit" class="btn btn-primary" style="background-color: rgb(255, 172, 63); border: none;">Emitir Nota</button>
+            </div>
+
+        </form>
+    </div>
+
     <!-- Script de Verificação de Perfil -->
     <script src="../js/api.js"></script>
     <script>
@@ -28,49 +69,6 @@
         window.location.href = "index.html"; // Volta para o menu principal
       }
     </script>
-
-<nav class="navbar navbar-dark p-3">
-    <div class="container">
-        <img alt="Logo" src="../img/sistema.png" >
-    </div>
-</nav>
-
-<div class="container mt-4">
-
-    <h2>Emissão de Nota Fiscal (Vendedor e Admin)</h2>
-
-    <form id="formNota" class="mt-3">
-
-        <div class="mb-3">
-            <label>Revendedor</label>
-            <select id="revendedor" class="form-control"></select>
-        </div>
-
-        <div class="mb-3">
-            <label>Selecionar Lote</label>
-            <select id="lote" class="form-control"></select>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col">
-                <label>Quantidade Vendida</label>
-                <input id="quantidade" type="number" class="form-control" required min="1">
-            </div>
-            <div class="col">
-                <label>Valor Unitário</label>
-                <input id="valor" type="number" class="form-control" step="0.01" required min="0.01">
-            </div>
-        </div>
-
-        <div class="mt-4">
-            <a href="../index.html" class="btn btn-secondary">Voltar</a>
-            <button type="submit" class="btn btn-primary" style="background-color: rgb(255, 172, 63); border: none;">Emitir Nota</button>
-        </div>
-
-    </form>
-</div>
-
-<script src="/api/js/api.js"></script>
-<script src="/api/js/notas.js"></script>
+    <script src="../js/notas.js"></script>
 </body>
 </html>

@@ -84,7 +84,7 @@
                 localStorage.setItem('userProfile', resp.perfil);
                 
                 // Redireciona para a página principal
-                window.location.href = "../pages/index.html"; 
+                window.location.href = "../api/pages/index.html";
             } else {
                 // Erro de credencial
                 messageBox.textContent = resp.erro || "Erro desconhecido no login.";
