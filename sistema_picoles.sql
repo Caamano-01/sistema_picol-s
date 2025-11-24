@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 19/11/2025 às 20:40
+-- Tempo de geração: 24/11/2025 às 03:53
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Banco de dados: `sistema_picoles`
+-- Banco de dados: `sistema_picolés`
 --
 
 -- --------------------------------------------------------
@@ -78,10 +78,7 @@ CREATE TABLE `embalagem` (
 INSERT INTO `embalagem` (`id`, `tipo`) VALUES
 (1, 'Plástica'),
 (2, 'Papel'),
-(3, 'Biodegradável'),
-(4, 'Plástica'),
-(5, 'Papel'),
-(6, 'Biodegradável');
+(3, 'Biodegradável');
 
 -- --------------------------------------------------------
 
@@ -104,13 +101,7 @@ INSERT INTO `ingredientes` (`id`, `nome`) VALUES
 (3, 'Leite'),
 (4, 'Corante'),
 (5, 'Aroma Natural'),
-(6, 'Fruta'),
-(7, 'Água'),
-(8, 'Açúcar'),
-(9, 'Leite'),
-(10, 'Corante'),
-(11, 'Aroma Natural'),
-(12, 'Fruta');
+(6, 'Fruta');
 
 -- --------------------------------------------------------
 
@@ -197,8 +188,7 @@ CREATE TABLE `picole` (
 INSERT INTO `picole` (`id`, `nome`, `tipo`, `id_sabor`, `id_embalagem`) VALUES
 (1, 'Picolé de Morango', 'normal', 1, 1),
 (2, 'Picolé de Chocolate', 'ao leite', 2, 1),
-(3, 'Picolé de Limão', 'normal', 4, 3),
-(4, 'Choquito', 'normal', 2, 3);
+(3, 'Picolé de Limão', 'normal', 4, 3);
 
 -- --------------------------------------------------------
 
@@ -234,7 +224,7 @@ INSERT INTO `picole_ingrediente` (`id_picole`, `id_ingrediente`) VALUES
 
 CREATE TABLE `revendedor` (
   `id` int(11) NOT NULL,
-  `nome` varchar(50) DEFAULT NULL,
+  `razão social` varchar(50) DEFAULT NULL,
   `cnpj` varchar(20) DEFAULT NULL,
   `endereco` varchar(150) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -243,7 +233,7 @@ CREATE TABLE `revendedor` (
 -- Despejando dados para a tabela `revendedor`
 --
 
-INSERT INTO `revendedor` (`id`, `nome`, `cnpj`, `endereco`) VALUES
+INSERT INTO `revendedor` (`id`, `razão social`, `cnpj`, `endereco`) VALUES
 (1, 'Gelados Ltda', '11.222.333/0001-44', 'Rua das Flores, 123'),
 (2, 'Frio & Cia', '55.666.777/0001-88', 'Av. Central, 456');
 
@@ -267,12 +257,7 @@ INSERT INTO `sabor` (`id`, `nome`) VALUES
 (2, 'Chocolate'),
 (3, 'Uva'),
 (4, 'Limão'),
-(5, 'Coco'),
-(6, 'Morango'),
-(7, 'Chocolate'),
-(8, 'Uva'),
-(9, 'Limão'),
-(10, 'Coco');
+(5, 'Coco');
 
 -- --------------------------------------------------------
 
@@ -434,13 +419,7 @@ ALTER TABLE `revendedor`
 -- AUTO_INCREMENT de tabela `sabor`
 --
 ALTER TABLE `sabor`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT de tabela `usuario`
---
-ALTER TABLE `usuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Restrições para tabelas despejadas
