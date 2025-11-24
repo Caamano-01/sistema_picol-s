@@ -19,9 +19,6 @@ if (!isset($dados["username"]) || !isset($dados["senha"])) {
     exit;
 }
 
-$username = $dados["username"];
-$senha    = $dados["senha"];
-
 $stmt = $pdo->prepare("SELECT id, username, senha, perfil FROM usuario WHERE username = ?");
 $stmt->execute([$username]);
 $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -37,3 +34,4 @@ echo json_encode([
     "perfil" => $usuario["perfil"]
 ]);
 exit;
+?>
