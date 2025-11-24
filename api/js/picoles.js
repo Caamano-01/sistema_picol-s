@@ -1,19 +1,25 @@
 document.addEventListener("DOMContentLoaded", async () => {
     await carregarCombos();
 
-    document.getElementById("formPicole").addEventListener("submit", async (e) => {
+    document.getElementById("form-picole").addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        const ingredientesSelecionados = Array.from(
+        document.getElementById("ingredientes-picole").selectedOptions
+        ).map(opt => opt.value);
+
         const dados = {
-            nome: document.getElementById("nome").value,
-            tipo: document.getElementById("tipo").value,
-            id_sabor: document.getElementById("sabor").value,
-            id_embalagem: document.getElementById("embalagem").value
+            nome: document.getElementById("nome-picole").value,
+            tipo: document.getElementById("tipo-picole").value,
+            id_sabor: document.getElementById("sabor-picole").value,
+            id_embalagem: document.getElementById("embalagem-picole").value,
+            ingredientes: ingredientesSelecionados,
+            conservante: document.getElementById("conservante-picole").value || null,
+            adtivo: document.getElementById("adtivo-picole").value || null
         };
 
         await apiPost("picole.php", dados);
-
-        alert("Picolé cadastrado com sucesso!");
+        alert("Picolé cadastrado!");
         e.target.reset();
     });
 });

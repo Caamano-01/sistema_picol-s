@@ -6,7 +6,7 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 
 // Dados do banco
 $host = "localhost";
-$db   = "sistema_picoles";
+$db   = "sistema_picolés";
 $user = "root";
 $pass = "";
 $charset = "utf8mb4";

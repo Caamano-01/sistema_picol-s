@@ -8,7 +8,7 @@ $method = $_SERVER["REQUEST_METHOD"];
 
 if ($method === "GET") {
     echo json_encode(
-        $pdo->query("SELECT * FROM sabor ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC)
+        $pdo->query("SELECT * FROM conservante ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC)
     );
     exit;
 }
@@ -16,7 +16,7 @@ if ($method === "GET") {
 if ($method === "POST") {
     $dados = json_decode(file_get_contents("php://input"), true);
 
-    $stmt = $pdo->prepare("INSERT INTO sabor (nome) VALUES (?)");
+    $stmt = $pdo->prepare("INSERT INTO conservante (nome) VALUES (?)");
     $stmt->execute([$dados["nome"]]);
 
     echo json_encode(["sucesso" => true]);

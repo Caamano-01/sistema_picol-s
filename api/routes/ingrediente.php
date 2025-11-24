@@ -4,22 +4,19 @@ header("Content-Type: application/json");
 
 require "../config.php";
 
-$method = $_SERVER["REQUEST_METHOD"];
+$ingredientes = [];
 
-if ($method === "GET") {
-    echo json_encode(
-        $pdo->query("SELECT * FROM ingrediente ORDER BY nome")
-            ->fetchAll(PDO::FETCH_ASSOC)
-    );
-    exit;
-}
+// Ingredientes básicos
+$ingred = $pdo->query("SELECT id, nome, 'ingrediente' AS tipo FROM ingrediente ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
 
-if ($method === "POST") {
-    $dados = json_decode(file_get_contents("php://input"), true);
+// Aditivos nutricionais
+$aditivos = $pdo->query("SELECT id, nome, 'aditivo_nutritivo' AS tipo FROM aditivo_nutritivo ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmt = $pdo->prepare("INSERT INTO ingrediente (nome) VALUES (?)");
-    $stmt->execute([$dados["nome"]]);
+// Conservantes
+$conservantes = $pdo->query("SELECT id, nome, 'conservante' AS tipo FROM conservante ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode(["sucesso" => true]);
-}
+// Junta tudo
+$ingredientes = array_merge($ingred, $aditivos, $conservantes);
+
+echo json_encode($ingredientes);
 ?>

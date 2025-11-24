@@ -13,7 +13,7 @@ function getUserProfile() {
  */
 function logout() {
     localStorage.removeItem('userProfile');
-    window.location.href = "pages/login.html"; // Redireciona para a página de login
+    window.location.href = "api/login.html"; // Redireciona para a página de login
 }
 
 async function apiGet(endpoint) {
@@ -22,16 +22,17 @@ async function apiGet(endpoint) {
 }
 
 async function apiPost(endpoint, data) {
-    const response = await fetch(url, {
+    const response = await fetch(API_URL + endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
     });
-    
-    // Se a API retornar um erro (ex: 401), retorna o corpo da resposta JSON (que deve conter o erro)
-    if (!resp.ok) {
-        return resp.json();
+
+    const json = await response.json();
+
+    if (!response.ok) {
+        return json; // erro vindo do servidor
     }
-    
-    return response.json();
+
+    return json;
 }
