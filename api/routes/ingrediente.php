@@ -7,7 +7,7 @@ require "../config.php";
 $ingredientes = [];
 
 // Ingredientes básicos
-$ingred = $pdo->query("SELECT id, nome, 'ingrediente' AS tipo FROM ingrediente ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
+$ingred = $pdo->query("SELECT id, nome, 'ingrediente' AS tipo FROM ingredientes ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
 
 // Aditivos nutricionais
 $aditivos = $pdo->query("SELECT id, nome, 'aditivo_nutritivo' AS tipo FROM aditivo_nutritivo ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);

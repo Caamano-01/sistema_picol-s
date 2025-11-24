@@ -6,7 +6,7 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 
 // Dados do banco
 $host = "localhost";
-$db   = "sistema_picolés";
+$db   = "sistema_picoles";
 $user = "root";
 $pass = "";
 $charset = "utf8mb4";
@@ -21,8 +21,9 @@ $options = [
 ];
 
 try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
+    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die(json_encode(["erro" => "Erro ao conectar: " . $e->getMessage()]));
+    die(json_encode(["erro" => "Erro ao conectar ao banco: " . $e->getMessage()]));
 }
 ?>

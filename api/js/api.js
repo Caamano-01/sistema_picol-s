@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:1234/sistema_picoles/api/";
+const API_URL = "http://localhost:1234/sistema_picoles/api/routes/";
 
 /**
  * Obtém o perfil do usuário armazenado localmente.
@@ -29,10 +29,5 @@ async function apiPost(endpoint, data) {
     });
 
     const json = await response.json();
-
-    if (!response.ok) {
-        return json; // erro vindo do servidor
-    }
-
     return json;
 }
