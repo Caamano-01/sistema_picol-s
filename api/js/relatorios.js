@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --------------------------------------------------------
     try {
         // Usa a função apiGet de api.js para buscar o relatório
-        const dadosVendas = await apiGet("relatorios.php?vendas=true");
+        const dadosVendas = await apiGet("../routes/relatorios.php?vendas=true");
 
         if (dadosVendas && dadosVendas.length > 0) {
             const labelsVendas = dadosVendas.map(r => r.mes);
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 2. RANKING DE PICOLÉS
     // --------------------------------------------------------
     try {
-        const dadosRanking = await apiGet("relatorios.php?ranking=true");
+        const dadosRanking = await apiGet("../routes/relatorios.php?ranking=true");
 
         if (dadosRanking && dadosRanking.length > 0) {
             const labelsRanking = dadosRanking.map(r => r.picole);
