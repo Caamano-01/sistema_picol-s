@@ -12,11 +12,10 @@ if ($method === "GET") {
     if (isset($_GET["id_picole"])) {
         // Lista somente os ingredientes de um picolé
         $stmt = $pdo->prepare("
-            SELECT pi.*, 
-                   i.nome AS ingrediente,
-                   pi.tipo_ingrediente
+            SELECT pi.*,
+                   i.nome AS ingrediente
             FROM picole_ingrediente pi
-            LEFT JOIN ingredientes i ON (pi.id_ingrediente = i.id AND pi.tipo_ingrediente = 'ingrediente')
+            LEFT JOIN ingredientes i ON pi.id_ingrediente = i.id
             WHERE pi.id_picole = ?
         ");
         $stmt->execute([$_GET["id_picole"]]);
@@ -35,13 +34,12 @@ if ($method === "POST") {
     $dados = json_decode(file_get_contents("php://input"), true);
 
     $stmt = $pdo->prepare("
-        INSERT INTO picole_ingrediente (id_picole, id_ingrediente, tipo_ingrediente)
-        VALUES (?, ?, ?)
+        INSERT INTO picole_ingrediente (id_picole, id_ingrediente)
+        VALUES (?, ?)
     ");
     $stmt->execute([
         $dados["id_picole"],
-        $dados["id_ingrediente"],
-        $dados["tipo_ingrediente"]
+        $dados["id_ingrediente"]
     ]);
 
     echo json_encode(["sucesso" => true]);

@@ -145,8 +145,8 @@
         <label for="tipo">Tipo:</label>
         <select id="tipo-picole" class="form-select" required>
           <option value="" disabled selected>Selecione o tipo</option>
-          <option value="cremoso">Normal</option>
-          <option value="agua">Ao leite</option>
+          <option value="normal">Normal</option>
+          <option value="ao_leite">Ao leite</option>
         </select>
         <br />
 
@@ -332,8 +332,8 @@
       boxIngredientes.style.display = "block";
 
       // Exibe apenas a caixa correspondente
-      boxAdtivo.style.display = tipo === "cremoso" ? "block" : "none";
-      boxConservante.style.display = tipo === "agua" ? "block" : "none";
+      boxAdtivo.style.display = tipo === "normal" ? "block" : "none";
+      boxConservante.style.display = tipo === "ao_leite" ? "block" : "none";
     });
 
     // ===== Função auxiliar para envio de dados (utiliza a API do api.js) =====
@@ -363,71 +363,42 @@
 
     // --- PICOLÉS (Lógica de Múltiplas Chamadas) ---
     document.getElementById("form-picole").addEventListener("submit", async (e) => {
-        e.preventDefault();
+      e.preventDefault();
 
-        // 1. Coletar dados do picolé principal
-        const formPicole = document.getElementById("form-picole");
-        const nome = formPicole.elements['nome-picole'].value;
-        const tipo = formPicole.elements['tipo-picole'].value;
-        const id_sabor = formPicole.elements['sabor-picole'].value;
-        const id_embalagem = formPicole.elements['embalagem-picole'].value;
+      const nome = document.getElementById("nome-picole").value;
+      const tipo = document.getElementById("tipo-picole").value;
+      const id_sabor = document.getElementById("sabor-picole").value;
+      const id_embalagem = document.getElementById("embalagem-picole").value;
+
+      // 1 — cadastrar o picolé
+      const resPicole = await apiPost("picole.php", {
+        nome,
+        tipo,
+        id_sabor,
+        id_embalagem
+      });
         
-        // 2. Cadastrar Picolé (picole.php retorna o novo ID)
-        const resPicole = await apiPost("picole.php", {
-            nome: nome,
-            tipo: tipo,
-            id_sabor: id_sabor,
-            id_embalagem: id_embalagem,
+      if (!resPicole.sucesso) {
+        alert("Erro ao cadastrar picolé.");
+        return;
+      }
+
+      const id_picole = resPicole.id;
+
+      // 2 — cadastrar ingredientes
+      const ingredientes = Array.from(
+        document.getElementById("ingredientes-picole").selectedOptions
+      ).map(opt => opt.value);
+
+      for (const id_ing of ingredientes) {
+        await apiPost("picole_ingrediente.php", {
+         id_picole,                id_ingrediente: id_ing
         });
+      }
 
-        if (!resPicole.sucesso || !resPicole.id) {
-            alert("Falha ao cadastrar o Picolé principal.");
-            return;
-        }
-
-        const id_picole = resPicole.id;
-        let ingredientesCadastrados = true;
-
-        // 3. Cadastrar Ingredientes Simples (via picole_ingrediente.php)
-        const ingredientesSimplesIds = getSelectValues(document.getElementById("ingredientes-picole"));
-        for (const id_ingrediente of ingredientesSimplesIds) {
-            const resIng = await apiPost("picole_ingrediente.php", {
-                id_picole: id_picole,
-                id_ingrediente: id_ingrediente,
-                tipo_ingrediente: "ingrediente",
-            });
-            if (!resIng.sucesso) { ingredientesCadastrados = false; }
-        }
-
-        // 4. Cadastrar Aditivo OU Conservante (via picole_ingrediente.php)
-        if (tipo === "cremoso" && formPicole.elements['adtivo-picole'].value) {
-            const id_aditivo = formPicole.elements['adtivo-picole'].value;
-            const resAdt = await apiPost("picole_ingrediente.php", {
-                id_picole: id_picole,
-                id_ingrediente: id_aditivo,
-                tipo_ingrediente: "aditivo_nutritivo",
-            });
-            if (!resAdt.sucesso) { ingredientesCadastrados = false; }
-        } else if (tipo === "agua" && formPicole.elements['conservante-picole'].value) {
-            const id_conservante = formPicole.elements['conservante-picole'].value;
-            const resCons = await apiPost("picole_ingrediente.php", {
-                id_picole: id_picole,
-                id_ingrediente: id_conservante,
-                tipo_ingrediente: "conservante",
-            });
-            if (!resCons.sucesso) { ingredientesCadastrados = false; }
-        }
-
-        // 5. Feedback final e Recarga
-        if (ingredientesCadastrados) {
-            alert("Picolé e seus componentes cadastrados com sucesso!");
-            formPicole.reset();
-            carregarSelect("../routes/picole.php", "picole", "nome"); // Recarrega o select do Lote
-        } else {
-            alert("Picolé cadastrado, mas houve falha ao cadastrar um ou mais componentes!");
-        }
+      alert("Picolé cadastrado com sucesso!");
+      e.target.reset();
     });
-
 
     // --- OUTROS FORMULÁRIOS SIMPLES ---
 
