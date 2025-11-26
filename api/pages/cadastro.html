@@ -277,15 +277,19 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // ===== Função genérica para carregar selects via fetch =====
     function carregarSelect(url, elementoId, campo) {
       fetch(url)
         .then(r => r.json())
         .then(lista => {
-          document.getElementById(elementoId).innerHTML =
-            lista.map(item => `<option value="${item.id}">${item[campo]}</option>`).join("");
+          // ⚠️ Adiciona a opção inicial
+          let options = `<option value="" disabled selected>Selecione...</option>`; 
+          options += lista.map(item => `<option value="${item.id}">${item[campo]}</option>`).join("");
+          document.getElementById(elementoId).innerHTML = options;
         })
-        .catch(err => console.error(`Erro ao carregar ${elementoId}:`, err));
+        .catch(err => {
+          console.error(`❌ Erro ao carregar ${elementoId}: URL: ${url}`, err);
+          document.getElementById(elementoId).innerHTML = `<option value="" disabled>Erro ao carregar dados</option>`;
+        });
     }
 
     // ===== Inicializar selects =====
@@ -294,6 +298,8 @@
     carregarSelect("../routes/conservante.php", "conservante-picole", "nome");
     carregarSelect("../routes/sabor.php", "sabor-picole", "nome");
     carregarSelect("../routes/embalagem.php", "embalagem-picole", "tipo");
+    // 🚀 Adicionado o carregamento de Picolé para o formulário de Lote
+    carregarSelect("../routes/picole.php", "picole", "nome");
 
     // ===== Alternância de abas =====
     const links = document.querySelectorAll(".nav-link");
@@ -330,14 +336,167 @@
       boxConservante.style.display = tipo === "agua" ? "block" : "none";
     });
 
-    // ===== Prevenir refresh de página ao enviar formulários =====
-    const forms = document.querySelectorAll("form");
-    forms.forEach(form => {
-      form.addEventListener("submit", e => {
+    // ===== Função auxiliar para envio de dados (utiliza a API do api.js) =====
+    async function enviarDados(endpoint, dados) {
+      // apiPost está definida no api.js
+      const resultado = await apiPost(endpoint, dados);
+
+      if (!resultado.sucesso) {
+        console.error(`Falha no POST para ${endpoint}:`, resultado);
+      }
+      return resultado;
+    }
+
+    // Função auxiliar para extrair múltiplos valores de um select
+    function getSelectValues(select) {
+        const result = [];
+        const options = select.options;
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].selected) {
+                result.push(options[i].value);
+            }
+        }
+        return result;
+    }
+
+    // ===== 🚀 Lógica de envio de formulários (Substitui o forms.forEach) =====
+
+    // --- PICOLÉS (Lógica de Múltiplas Chamadas) ---
+    document.getElementById("form-picole").addEventListener("submit", async (e) => {
         e.preventDefault();
-        // Aqui você pode chamar sua API via fetch
-        alert(`Formulário '${form.id}' enviado!`);
-      });
+
+        // 1. Coletar dados do picolé principal
+        const formPicole = document.getElementById("form-picole");
+        const nome = formPicole.elements['nome-picole'].value;
+        const tipo = formPicole.elements['tipo-picole'].value;
+        const id_sabor = formPicole.elements['sabor-picole'].value;
+        const id_embalagem = formPicole.elements['embalagem-picole'].value;
+        
+        // 2. Cadastrar Picolé (picole.php retorna o novo ID)
+        const resPicole = await apiPost("picole.php", {
+            nome: nome,
+            tipo: tipo,
+            id_sabor: id_sabor,
+            id_embalagem: id_embalagem,
+        });
+
+        if (!resPicole.sucesso || !resPicole.id) {
+            alert("Falha ao cadastrar o Picolé principal.");
+            return;
+        }
+
+        const id_picole = resPicole.id;
+        let ingredientesCadastrados = true;
+
+        // 3. Cadastrar Ingredientes Simples (via picole_ingrediente.php)
+        const ingredientesSimplesIds = getSelectValues(document.getElementById("ingredientes-picole"));
+        for (const id_ingrediente of ingredientesSimplesIds) {
+            const resIng = await apiPost("picole_ingrediente.php", {
+                id_picole: id_picole,
+                id_ingrediente: id_ingrediente,
+                tipo_ingrediente: "ingrediente",
+            });
+            if (!resIng.sucesso) { ingredientesCadastrados = false; }
+        }
+
+        // 4. Cadastrar Aditivo OU Conservante (via picole_ingrediente.php)
+        if (tipo === "cremoso" && formPicole.elements['adtivo-picole'].value) {
+            const id_aditivo = formPicole.elements['adtivo-picole'].value;
+            const resAdt = await apiPost("picole_ingrediente.php", {
+                id_picole: id_picole,
+                id_ingrediente: id_aditivo,
+                tipo_ingrediente: "aditivo_nutritivo",
+            });
+            if (!resAdt.sucesso) { ingredientesCadastrados = false; }
+        } else if (tipo === "agua" && formPicole.elements['conservante-picole'].value) {
+            const id_conservante = formPicole.elements['conservante-picole'].value;
+            const resCons = await apiPost("picole_ingrediente.php", {
+                id_picole: id_picole,
+                id_ingrediente: id_conservante,
+                tipo_ingrediente: "conservante",
+            });
+            if (!resCons.sucesso) { ingredientesCadastrados = false; }
+        }
+
+        // 5. Feedback final e Recarga
+        if (ingredientesCadastrados) {
+            alert("Picolé e seus componentes cadastrados com sucesso!");
+            formPicole.reset();
+            carregarSelect("../routes/picole.php", "picole", "nome"); // Recarrega o select do Lote
+        } else {
+            alert("Picolé cadastrado, mas houve falha ao cadastrar um ou mais componentes!");
+        }
+    });
+
+
+    // --- OUTROS FORMULÁRIOS SIMPLES ---
+
+    const formsSimples = [
+      { id: "form-lote", endpoint: "lote.php", reloadSelect: "picole" },
+      { id: "form-embalagem", endpoint: "embalagem.php", field: "tipo", frontendField: "tipo-embalagem", reloadSelect: "embalagem-picole" },
+      { id: "form-sabor", endpoint: "sabor.php", field: "nome", frontendField: "nome-sabor", reloadSelect: "sabor-picole" },
+      { id: "form-adtivo", endpoint: "aditivo_nutritivo.php", field: "nome", frontendField: "nome-adtivo", reloadSelect: "adtivo-picole" },
+      { id: "form-conservante", endpoint: "conservante.php", field: "nome", frontendField: "nome-conservante", reloadSelect: "conservante-picole" }
+      // O formulário de Ingredientes (tabela `ingredientes`) não pode ser cadastrado
+      // pois o arquivo `ingrediente.php` não tem lógica de POST.
+    ];
+
+    formsSimples.forEach(item => {
+        const form = document.getElementById(item.id);
+        if (!form) return;
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            let dados = {};
+            let campoValor = "";
+
+            if (item.id === "form-lote") {
+                dados = {
+                    id_picole: document.getElementById("picole").value,
+                    quantidade: document.getElementById("quantidade").value,
+                    data_producao: document.getElementById("data-producao").value,
+                };
+            } else {
+                campoValor = document.getElementById(item.frontendField).value;
+                dados[item.field] = campoValor;
+            }
+
+            const resultado = await apiPost(item.endpoint, dados);
+
+            if (resultado.sucesso) {
+                alert(`Cadastro realizado com sucesso!`);
+                e.target.reset();
+                if (item.reloadSelect) {
+                    // Recarrega o select que depende deste cadastro
+                    carregarSelect(`../routes/${item.endpoint}`, item.reloadSelect, item.field || 'nome' || 'tipo');
+                }
+            } else {
+                alert(`Falha ao cadastrar no endpoint ${item.endpoint}.`);
+            }
+        });
+    });
+
+    // --- REVENDEDOR (Tratamento especial por causa dos campos) ---
+    document.getElementById("form-revendedor").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const nome = document.getElementById("razao-social").value;
+        const cnpj = document.getElementById("cnpj").value;
+        const endereco = document.getElementById("endereco").value;
+        
+        // revendedor.php espera "nome", "cnpj", "endereco"
+        const resultado = await apiPost("revendedor.php", {
+            nome: nome,
+            cnpj: cnpj,
+            endereco: endereco,
+        });
+
+        if (resultado.sucesso) {
+            alert("Revendedor cadastrado com sucesso!");
+            document.getElementById("form-revendedor").reset();
+        } else {
+            alert("Falha ao cadastrar Revendedor.");
+        }
     });
   </script>
 </body>

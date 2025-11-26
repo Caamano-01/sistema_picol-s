@@ -1,6 +1,7 @@
 /**
  * ARQUIVO: relatorios.js
  * DESCRIÇÃO: Busca dados de múltiplos relatórios e renderiza gráficos usando Chart.js.
+ * Depende de api.js para a função apiGet.
  */
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -9,23 +10,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     function exibirMensagem(idElemento, mensagem) {
         const container = document.getElementById(idElemento);
         if (container) {
-            container.insertAdjacentHTML("afterend", `<p class="text-danger mt-2">${mensagem}</p>`);
+            // Insere a mensagem logo abaixo do elemento Canvas/h3
+            container.insertAdjacentHTML("afterend", `<p class="alert alert-danger mt-2">${mensagem}</p>`);
         }
     }
 
-    // Função para buscar dados da API
-    async function apiGet(url) {
-        try {
-            const resp = await fetch(url);
-            if (!resp.ok) throw new Error(`Erro HTTP ${resp.status}`);
-            return await resp.json();
-        } catch (err) {
-            console.error("Falha na requisição:", err);
-            return null;
-        }
-    }
-
-    // Função para gerar cores aleatórias
+    // Função para gerar cores aleatórias (Pode ser mantida se for usada em Ranking)
     function gerarCoresAleatorias(numCores) {
         const cores = [];
         for (let i = 0; i < numCores; i++) {
@@ -40,80 +30,80 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --------------------------------------------------------
     // 1. FATURAMENTO MENSAL
     // --------------------------------------------------------
-    const dadosVendas = await apiGet("relatorios.php?vendas=true");
+    try {
+        // Usa a função apiGet de api.js para buscar o relatório
+        const dadosVendas = await apiGet("relatorios.php?vendas=true");
 
-    if (dadosVendas && dadosVendas.length > 0) {
-        const labelsVendas = dadosVendas.map(r => r.mes);
-        const valoresVendas = dadosVendas.map(r => parseFloat(r.total));
+        if (dadosVendas && dadosVendas.length > 0) {
+            const labelsVendas = dadosVendas.map(r => r.mes);
+            const valoresVendas = dadosVendas.map(r => parseFloat(r.total));
 
-        new Chart(document.getElementById("graficoVendas"), {
-            type: 'bar',
-            data: {
-                labels: labelsVendas,
-                datasets: [{
-                    label: "Faturamento Total (R$)",
-                    data: valoresVendas,
-                    backgroundColor: "rgba(54, 162, 235, 0.7)",
-                    borderColor: "rgba(54, 162, 235, 1)",
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: true },
-                    title: {
-                        display: true,
-                        text: 'Faturamento Mensal'
-                    }
+            new Chart(document.getElementById('graficoVendas'), {
+                type: 'line',
+                data: {
+                    labels: labelsVendas,
+                    datasets: [{
+                        label: 'Faturamento Total (R$)',
+                        data: valoresVendas,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
                 },
-                scales: {
-                    y: { beginAtZero: true }
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: true } }
                 }
-            }
-        });
-    } else {
-        console.log("Nenhum dado de faturamento encontrado.");
-        exibirMensagem("graficoVendas", "Nenhum dado de faturamento encontrado.");
+            });
+        } else {
+            exibirMensagem("graficoVendas", "Nenhum dado de faturamento encontrado.");
+        }
+    } catch (error) {
+        console.error("Erro ao carregar Faturamento Mensal:", error);
+        exibirMensagem("graficoVendas", "Erro ao carregar dados de faturamento. Verifique o console.");
     }
 
     // --------------------------------------------------------
     // 2. RANKING DE PICOLÉS
     // --------------------------------------------------------
-    const dadosRanking = await apiGet("relatorios.php?ranking=true");
+    try {
+        const dadosRanking = await apiGet("relatorios.php?ranking=true");
 
-    if (dadosRanking && dadosRanking.length > 0) {
-        const labelsRanking = dadosRanking.map(r => r.picole);
-        const valoresRanking = dadosRanking.map(r => parseInt(r.quantidade_vendida));
-        const coresRanking = gerarCoresAleatorias(dadosRanking.length);
+        if (dadosRanking && dadosRanking.length > 0) {
+            const labelsRanking = dadosRanking.map(r => r.picole);
+            const valoresRanking = dadosRanking.map(r => parseInt(r.quantidade_vendida));
+            const coresRanking = gerarCoresAleatorias(dadosRanking.length);
 
-        new Chart(document.getElementById("graficoRanking"), {
-            type: 'doughnut',
-            data: {
-                labels: labelsRanking,
-                datasets: [{
-                    label: "Unidades Vendidas",
-                    data: valoresRanking,
-                    backgroundColor: coresRanking,
-                    hoverOffset: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'top' },
-                    title: {
-                        display: true,
-                        text: 'Ranking de Picolés Mais Vendidos'
+            new Chart(document.getElementById("graficoRanking"), {
+                type: 'bar', // Tipo barra para ranking fica melhor
+                data: {
+                    labels: labelsRanking,
+                    datasets: [{
+                        label: "Unidades Vendidas",
+                        data: valoresRanking,
+                        backgroundColor: coresRanking,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: {
+                            display: true,
+                            text: 'Ranking de Picolés Mais Vendidos'
+                        }
                     }
                 }
-            }
-        });
-    } else {
-        console.log("Nenhum dado de ranking encontrado.");
-        exibirMensagem("graficoRanking", "Nenhum dado de ranking encontrado.");
+            });
+        } else {
+            exibirMensagem("graficoRanking", "Nenhum dado de ranking encontrado.");
+        }
+    } catch (error) {
+        console.error("Erro ao carregar Ranking de Picolés:", error);
+        exibirMensagem("graficoRanking", "Erro ao carregar dados de ranking. Verifique o console.");
     }
-
 });

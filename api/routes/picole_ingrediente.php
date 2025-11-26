@@ -16,7 +16,7 @@ if ($method === "GET") {
                    i.nome AS ingrediente,
                    pi.tipo_ingrediente
             FROM picole_ingrediente pi
-            LEFT JOIN ingrediente i ON (pi.id_ingrediente = i.id AND pi.tipo_ingrediente = 'ingrediente')
+            LEFT JOIN ingredientes i ON (pi.id_ingrediente = i.id AND pi.tipo_ingrediente = 'ingrediente')
             WHERE pi.id_picole = ?
         ");
         $stmt->execute([$_GET["id_picole"]]);

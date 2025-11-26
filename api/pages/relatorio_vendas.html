@@ -34,66 +34,6 @@
         window.location.href = "../index.html"; // Volta para o menu principal
       }
     </script>
-    <script>
-        async function carregarRelatorios() {
-            // ... Código JavaScript original mantido aqui para compilar ...
-            // 1. Faturamento Mensal
-            const respVendas = await fetch('../relatorios.php?vendas=true');
-            const dadosVendas = await respVendas.json();
-
-            const labelsVendas = dadosVendas.map(r => r.mes);
-            const valoresVendas = dadosVendas.map(r => parseFloat(r.total));
-
-            new Chart(document.getElementById('graficoVendas'), {
-                type: 'line',
-                data: {
-                    labels: labelsVendas,
-                    datasets: [{
-                        label: 'Faturamento (R$)',
-                        data: valoresVendas,
-                        borderColor: 'rgb(75, 192, 192)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: true } }
-                }
-            });
-
-            // 2. Ranking de Picolés
-            const respRanking = await fetch('../relatorios.php?ranking=true');
-            const dadosRanking = await respRanking.json();
-
-            const labelsRanking = dadosRanking.map(r => r.picole);
-            const valoresRanking = dadosRanking.map(r => parseInt(r.quantidade_vendida));
-
-            new Chart(document.getElementById('graficoRanking'), {
-                type: 'bar',
-                data: {
-                    labels: labelsRanking,
-                    datasets: [{
-                        label: 'Quantidade Vendida',
-                        data: valoresRanking,
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                        borderColor: 'rgb(255, 99, 132)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: true } },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-        carregarRelatorios();
-    </script>
     <script src="../js/relatorios.js"></script>
 </body>
-</html
+</html>

@@ -6,6 +6,9 @@
  * 2. ?ranking=true: Picolés mais vendidos por quantidade no último mês.
  */
 
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+ini_set('display_errors', 0);
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
