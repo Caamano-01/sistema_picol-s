@@ -36,10 +36,24 @@ try {
     }
 
     // -------------------------------------------------------------------------
-    // 2. RELATÓRIO DE RANKING DE PICOLÉS (MAIS VENDIDOS NO ÚLTIMO MÊS)
+    // 2. RELATÓRIO DE RANKING DE PICOLÉS (MAIS VENDIDOS NO ÚLTIMO MÊS COM VENDAS)
     // -------------------------------------------------------------------------
     if (isset($_GET["ranking"])) {
-        // Calcula primeiro e último dia do mês anterior
+        // 1. Encontra o ano e mês da última nota fiscal registrada
+        $stmt_ultima_data = $pdo->prepare("SELECT YEAR(MAX(data)) AS ultimo_ano, MONTH(MAX(data)) AS ultimo_mes FROM nota_fiscal");
+        $stmt_ultima_data->execute();
+        $data_max = $stmt_ultima_data->fetch(PDO::FETCH_ASSOC);
+
+        if (empty($data_max['ultimo_ano'])) {
+            // Se não houver nota fiscal, retorna vazio.
+            echo json_encode([]);
+            exit;
+        }
+
+        $ultimo_ano = $data_max['ultimo_ano'];
+        $ultimo_mes = $data_max['ultimo_mes'];
+
+        // 2. Consulta de Ranking (filtrando pelo último mês encontrado)
         $sql = "
             SELECT 
                 p.nome AS picole,
@@ -48,13 +62,14 @@ try {
             INNER JOIN lote l ON l.id = nl.id_lote
             INNER JOIN picole p ON p.id = l.id_picole
             INNER JOIN nota_fiscal nf ON nf.id = nl.id_nota
-            WHERE nf.data >= DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH, '%Y-%m-01')
-              AND nf.data < DATE_FORMAT(CURDATE(), '%Y-%m-01')
+            WHERE YEAR(nf.data) = :ultimo_ano AND MONTH(nf.data) = :ultimo_mes
             GROUP BY p.nome
             ORDER BY quantidade_vendida DESC
         ";
 
         $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':ultimo_ano', $ultimo_ano);
+        $stmt->bindParam(':ultimo_mes', $ultimo_mes);
         $stmt->execute();
         echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
         exit;
