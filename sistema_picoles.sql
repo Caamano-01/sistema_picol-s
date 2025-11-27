@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 24/11/2025 às 03:53
+-- Tempo de geração: 27/11/2025 às 19:46
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Banco de dados: `sistema_picolés`
+-- Banco de dados: `sistema_picoles`
 --
 
 -- --------------------------------------------------------
@@ -58,7 +58,8 @@ CREATE TABLE `conservante` (
 
 INSERT INTO `conservante` (`id`, `nome`) VALUES
 (1, 'Benzoato de Sódio'),
-(2, 'Sorbato de Potássio');
+(2, 'Sorbato de Potássio'),
+(3, 'auhauwdju');
 
 -- --------------------------------------------------------
 
@@ -78,7 +79,8 @@ CREATE TABLE `embalagem` (
 INSERT INTO `embalagem` (`id`, `tipo`) VALUES
 (1, 'Plástica'),
 (2, 'Papel'),
-(3, 'Biodegradável');
+(3, 'Biodegradável'),
+(7, 'papelão');
 
 -- --------------------------------------------------------
 
@@ -121,9 +123,13 @@ CREATE TABLE `lote` (
 --
 
 INSERT INTO `lote` (`id`, `data_producao`, `quantidade`, `id_picole`) VALUES
-(1, '2025-01-10', 500, 1),
+(1, '2025-01-10', 115, 1),
 (2, '2025-01-15', 300, 2),
-(3, '2025-01-20', 450, 3);
+(3, '2025-01-20', 450, 3),
+(4, '2025-11-26', 100, 1),
+(5, '2025-09-16', 0, 36),
+(6, '2025-10-23', 0, 2),
+(7, '2025-10-17', 10, 36);
 
 -- --------------------------------------------------------
 
@@ -144,7 +150,13 @@ CREATE TABLE `nota_fiscal` (
 --
 
 INSERT INTO `nota_fiscal` (`id`, `numero`, `data`, `id_revendedor`, `valor_total`) VALUES
-(1, 'NF0001', '2025-02-01', 1, 400.00);
+(1, 'NF0001', '2025-02-01', 1, 400.00),
+(2, 'NF0002', '2025-11-24', 2, 1050.00),
+(3, 'NF0003', '2025-11-26', 3, 30000.00),
+(4, 'NF0004', '2025-11-27', 2, 127.50),
+(5, 'NF0005', '2025-11-27', 3, 1350.00),
+(6, 'NF0006', '2025-11-27', 1, 250.00),
+(7, 'NF0007', '2025-11-27', 2, 518.00);
 
 -- --------------------------------------------------------
 
@@ -165,7 +177,13 @@ CREATE TABLE `nota_lote` (
 
 INSERT INTO `nota_lote` (`id_nota`, `id_lote`, `quantidade_vendida`, `valor_unitario`) VALUES
 (1, 1, 100, 2.50),
-(1, 2, 50, 3.00);
+(1, 2, 50, 3.00),
+(2, 1, 300, 3.50),
+(3, 4, 200, 150.00),
+(4, 1, 85, 1.50),
+(5, 5, 300, 4.50),
+(6, 6, 100, 2.50),
+(7, 7, 140, 3.70);
 
 -- --------------------------------------------------------
 
@@ -188,7 +206,8 @@ CREATE TABLE `picole` (
 INSERT INTO `picole` (`id`, `nome`, `tipo`, `id_sabor`, `id_embalagem`) VALUES
 (1, 'Picolé de Morango', 'normal', 1, 1),
 (2, 'Picolé de Chocolate', 'ao leite', 2, 1),
-(3, 'Picolé de Limão', 'normal', 4, 3);
+(3, 'Picolé de Limão', 'normal', 4, 3),
+(36, 'Picolé de Açaí', 'normal', 6, 3);
 
 -- --------------------------------------------------------
 
@@ -235,7 +254,8 @@ CREATE TABLE `revendedor` (
 
 INSERT INTO `revendedor` (`id`, `razão social`, `cnpj`, `endereco`) VALUES
 (1, 'Gelados Ltda', '11.222.333/0001-44', 'Rua das Flores, 123'),
-(2, 'Frio & Cia', '55.666.777/0001-88', 'Av. Central, 456');
+(2, 'Frio & Cia', '55.666.777/0001-88', 'Av. Central, 456'),
+(3, 'Kibon', '61.068.276/0295-01', 'Rua Santo Arcadio, 304, Jardim das Acacias, São Paulo - SP, CEP 04.707-110');
 
 -- --------------------------------------------------------
 
@@ -257,7 +277,8 @@ INSERT INTO `sabor` (`id`, `nome`) VALUES
 (2, 'Chocolate'),
 (3, 'Uva'),
 (4, 'Limão'),
-(5, 'Coco');
+(5, 'Coco'),
+(6, 'Açaí');
 
 -- --------------------------------------------------------
 
@@ -278,7 +299,7 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`id`, `username`, `senha`, `perfil`) VALUES
 (1, 'admin', '123456', 'admin'),
-(2, 'vendedor', '123456', 'vendedor');
+(2, 'vendedor', '456789', 'vendedor');
 
 --
 -- Índices para tabelas despejadas
@@ -377,13 +398,13 @@ ALTER TABLE `aditivo_nutritivo`
 -- AUTO_INCREMENT de tabela `conservante`
 --
 ALTER TABLE `conservante`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `embalagem`
 --
 ALTER TABLE `embalagem`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de tabela `ingredientes`
@@ -395,31 +416,31 @@ ALTER TABLE `ingredientes`
 -- AUTO_INCREMENT de tabela `lote`
 --
 ALTER TABLE `lote`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de tabela `nota_fiscal`
 --
 ALTER TABLE `nota_fiscal`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de tabela `picole`
 --
 ALTER TABLE `picole`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de tabela `revendedor`
 --
 ALTER TABLE `revendedor`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `sabor`
 --
 ALTER TABLE `sabor`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restrições para tabelas despejadas
